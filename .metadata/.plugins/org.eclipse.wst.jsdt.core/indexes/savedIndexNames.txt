@@ -1,0 +1,8 @@
+INDEX VERSION 1.4+E:\phongtro123\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2200433017.index
+689805937.index
+2724472639.index
+2461411560.index
+102022057.index
+1909083387.index
+1672552360.index
