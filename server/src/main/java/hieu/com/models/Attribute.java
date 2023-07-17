@@ -9,24 +9,24 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "attribute")
 public class Attribute extends BaseEntity{
-	@Column(name = "price", length = 120, nullable = true)
-	private String price;
-	@Column(name = "acreage", length = 120, nullable = true)
-	private String acreage;
+	@Column(name = "price", nullable = true)
+	private Double price;
+	@Column(name = "acreage", nullable = true)
+	private Double acreage;
 	@Column(name = "published", length = 120, nullable = true)
 	private String published;
 	@Column(name = "hashtag", length = 120, nullable = true)
 	private String hashtag;
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(String price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public String getAcreage() {
+	public Double getAcreage() {
 		return acreage;
 	}
-	public void setAcreage(String acreage) {
+	public void setAcreage(Double acreage) {
 		this.acreage = acreage;
 	}
 	public String getPublished() {

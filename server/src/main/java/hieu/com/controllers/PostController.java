@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,13 +47,46 @@ public class PostController {
 	    return response;
 
 	}
+//	@GetMapping("/post/limit/price")
+//	public PostListResponse getLimitPostByPrice(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "10") int size,
+//			@RequestParam double minPrice, @RequestParam double maxPrice) {
+//		List<PostResponse> posts = postService.getLimitPostsByPrice(minPrice, maxPrice);
+//	    double countTotal = (double)postRepository.count(); // Lấy tổng số bài viết
+//	    int count = (int) Math.ceil(countTotal / size);
+//	    PostListResponse response = new PostListResponse();
+//	    response.setPosts(posts);
+//	    response.setCount(count);
+//
+//	    return response;
+//
+//	}
+	@GetMapping("post/limit/price")
+	public PostListResponse getPostByPrice(@RequestParam double minPrice, @RequestParam double maxPrice,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+	    List<PostResponse> posts= postService.getPagePostsByPrice(minPrice, maxPrice, page, size);
+		PageRequest pageable = PageRequest.of(page, size);
+	    Page<Object[]> postsPage = postRepository.findAllPostByPrice(minPrice, maxPrice, pageable);
+        double totalCount = (double)postsPage.getTotalElements();
+	    int count = (int) Math.ceil(totalCount / size);
+	    PostListResponse response = new PostListResponse();
+	    response.setPosts(posts);
+	    response.setCount(count);
 
-	@GetMapping("/post/test")
-	public ResponseEntity<List<Post>> getTestPost(@RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "5") int size) {
-	    PageRequest pr = PageRequest.of(page, size);
-	    Page<Post> postPage = postRepository.findAll(pr);
-	    List<Post> posts = postPage.getContent();
-	    return new ResponseEntity<>(posts, HttpStatus.OK);
+	    return response;
+	}
+	@GetMapping("post/limit/acreage")
+	public PostListResponse getPostByAcreage(@RequestParam double minAcreage, @RequestParam double maxAcreage,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+	    List<PostResponse> posts= postService.getPagePostsByAcreage(minAcreage, maxAcreage, page, size);
+		PageRequest pageable = PageRequest.of(page, size);
+	    Page<Object[]> postsPage = postRepository.findAllPostByArea(minAcreage, maxAcreage, pageable);
+        double totalCount = (double)postsPage.getTotalElements();
+	    int count = (int) Math.ceil(totalCount / size);
+	    PostListResponse response = new PostListResponse();
+	    response.setPosts(posts);
+	    response.setCount(count);
+
+	    return response;
 	}
 }

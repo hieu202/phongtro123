@@ -7,7 +7,7 @@ import { RiCrop2Line } from 'react-icons/ri'
 import { FiSearch } from 'react-icons/fi'
 const Search = () => {
   return (
-    <div className='h-[55px] p-[10px] bg-[#febb02] rounded-lg flex gap-2'>
+    <div className='w-[72%] h-[55px] p-[10px] bg-[#febb02] rounded-lg flex gap-2'>
       <SearchItem isBold={true} IconBefore={<BsHouseAdd />} IconAfter={<BsChevronRight />} text='test' />
       <SearchItem IconBefore={<CiLocationOn />} IconAfter={<BsChevronRight />} text='test' />
       <SearchItem IconBefore={<TbReportMoney />} IconAfter={<BsChevronRight />} text='test' />

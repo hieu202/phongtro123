@@ -26,3 +26,29 @@ export const apiGetPostsLimit = (page) => new Promise(async (resolve, reject) =>
         reject(error)
     }
 })
+export const apiGetPostsLimitByPrice = (page, minPrice, maxPrice) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await axiosConfig({
+            method: 'get',
+            url: `/api/v1/post/limit/price?page=${page}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
+            
+        })
+        resolve(response)
+
+    } catch (error) {
+        reject(error)
+    }
+})
+export const apiGetPostsLimitByAcreage = (page, minAcreage, maxAcreage) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await axiosConfig({
+            method: 'get',
+            url: `/api/v1/post/limit/acreage?page=${page}&minAcreage=${minAcreage}&maxAcreage=${maxAcreage}`,
+            
+        })
+        resolve(response)
+
+    } catch (error) {
+        reject(error)
+    }
+})

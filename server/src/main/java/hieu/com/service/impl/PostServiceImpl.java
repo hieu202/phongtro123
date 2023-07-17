@@ -132,4 +132,166 @@ public class PostServiceImpl implements PostService {
 		return postResponses;
 	}
 
+	@Override
+	public List<PostResponse> getLimitPostsByPrice(double minPrice, double maxPrice) {
+//		PageRequest pr = PageRequest.of(page, size);
+//	    Page<Post> postPage = postRepository.findAll(pr);
+//	    List<Post> posts = postPage.getContent();
+		List<Post> posts = postRepository.findAll();
+		List<PostResponse> postResponses = new ArrayList<>();
+		for (Post post : posts) {
+			PostResponse postResponse = new PostResponse();
+			postResponse.setId(post.getId());
+			postResponse.setAddress(post.getAddress());
+			postResponse.setTitle(post.getTitle());
+			postResponse.setDescription(post.getDescription());
+			postResponse.setStar(post.getStar());
+			
+			ImageDTO imageDTO = new ImageDTO();
+			AttributeDTO attributeDTO = new AttributeDTO();
+			UserDTO userDTO = new UserDTO();
+			if (post.getImages_id() != null) {
+				// lấy image
+				Image image = imageRepository.findById(post.getImages_id()).orElse(null);
+				if (image != null) {
+					imageDTO.setImage(image.getImage());
+				}
+				// lấy attribute
+				Attribute attribute = attributeRepository.findById(post.getAttribute_id()).orElse(null);
+				if (attribute != null) {
+					attributeDTO.setPrice(attribute.getPrice());
+					attributeDTO.setAcreage(attribute.getAcreage());
+					attributeDTO.setHashtag(attribute.getHashtag());
+					attributeDTO.setPublished(attribute.getPublished());
+				}
+				// lấy user
+				User user = userRepository.findById(post.getUser_id()).orElse(null);
+				if (user != null) {
+					userDTO.setName(user.getName());
+					userDTO.setPhone(user.getPhone());
+					userDTO.setZalo(user.getZalo());
+				}
+			}
+
+			postResponse.setImage(imageDTO);
+			postResponse.setAttributeDTO(attributeDTO);
+			postResponse.setUserDTO(userDTO);
+			if(attributeDTO.getPrice() >= minPrice && attributeDTO.getPrice() <= maxPrice) {
+			postResponses.add(postResponse);
+			}
+
+		}
+		return postResponses;
+	}
+
+	@Override
+	public List<PostResponse> getPagePostsByPrice(double minPrice, double maxPrice, int page, int size) {
+		// TODO Auto-generated method stub
+		PageRequest pr = PageRequest.of(page, size);
+	    Page<Object[]> postPage = postRepository.findAllPostByPrice(minPrice, maxPrice, pr);
+	    List<Object[]> postPage1 = postPage.getContent();
+	    List<Post> posts = new ArrayList<>();
+	    for(Object[] a: postPage1) {
+	    	Post post = postRepository.getById((Integer) a[0]);
+	    	posts.add(post);
+	    }
+		List<PostResponse> postResponses = new ArrayList<>();
+		for (Post post : posts) {
+			PostResponse postResponse = new PostResponse();
+			postResponse.setId(post.getId());
+			postResponse.setAddress(post.getAddress());
+			postResponse.setTitle(post.getTitle());
+			postResponse.setDescription(post.getDescription());
+			postResponse.setStar(post.getStar());
+			
+			ImageDTO imageDTO = new ImageDTO();
+			AttributeDTO attributeDTO = new AttributeDTO();
+			UserDTO userDTO = new UserDTO();
+			if (post.getImages_id() != null) {
+				// lấy image
+				Image image = imageRepository.findById(post.getImages_id()).orElse(null);
+				if (image != null) {
+					imageDTO.setImage(image.getImage());
+				}
+				// lấy attribute
+				Attribute attribute = attributeRepository.findById(post.getAttribute_id()).orElse(null);
+				if (attribute != null) {
+					attributeDTO.setPrice(attribute.getPrice());
+					attributeDTO.setAcreage(attribute.getAcreage());
+					attributeDTO.setHashtag(attribute.getHashtag());
+					attributeDTO.setPublished(attribute.getPublished());
+				}
+				// lấy user
+				User user = userRepository.findById(post.getUser_id()).orElse(null);
+				if (user != null) {
+					userDTO.setName(user.getName());
+					userDTO.setPhone(user.getPhone());
+					userDTO.setZalo(user.getZalo());
+				}
+			}
+
+			postResponse.setImage(imageDTO);
+			postResponse.setAttributeDTO(attributeDTO);
+			postResponse.setUserDTO(userDTO);
+			postResponses.add(postResponse);
+
+		}
+		return postResponses;
+	}
+
+	@Override
+	public List<PostResponse> getPagePostsByAcreage(double minAcreage, double maxAcreage, int page, int size) {
+		// TODO Auto-generated method stub
+		PageRequest pr = PageRequest.of(page, size);
+	    Page<Object[]> postPage = postRepository.findAllPostByArea(minAcreage, maxAcreage, pr);
+	    List<Object[]> postPage1 = postPage.getContent();
+	    List<Post> posts = new ArrayList<>();
+	    for(Object[] a: postPage1) {
+	    	Post post = postRepository.getById((Integer) a[0]);
+	    	posts.add(post);
+	    }
+		List<PostResponse> postResponses = new ArrayList<>();
+		for (Post post : posts) {
+			PostResponse postResponse = new PostResponse();
+			postResponse.setId(post.getId());
+			postResponse.setAddress(post.getAddress());
+			postResponse.setTitle(post.getTitle());
+			postResponse.setDescription(post.getDescription());
+			postResponse.setStar(post.getStar());
+			
+			ImageDTO imageDTO = new ImageDTO();
+			AttributeDTO attributeDTO = new AttributeDTO();
+			UserDTO userDTO = new UserDTO();
+			if (post.getImages_id() != null) {
+				// lấy image
+				Image image = imageRepository.findById(post.getImages_id()).orElse(null);
+				if (image != null) {
+					imageDTO.setImage(image.getImage());
+				}
+				// lấy attribute
+				Attribute attribute = attributeRepository.findById(post.getAttribute_id()).orElse(null);
+				if (attribute != null) {
+					attributeDTO.setPrice(attribute.getPrice());
+					attributeDTO.setAcreage(attribute.getAcreage());
+					attributeDTO.setHashtag(attribute.getHashtag());
+					attributeDTO.setPublished(attribute.getPublished());
+				}
+				// lấy user
+				User user = userRepository.findById(post.getUser_id()).orElse(null);
+				if (user != null) {
+					userDTO.setName(user.getName());
+					userDTO.setPhone(user.getPhone());
+					userDTO.setZalo(user.getZalo());
+				}
+			}
+
+			postResponse.setImage(imageDTO);
+			postResponse.setAttributeDTO(attributeDTO);
+			postResponse.setUserDTO(userDTO);
+			postResponses.add(postResponse);
+
+		}
+		return postResponses;
+	}
+
 }

@@ -35,8 +35,8 @@ const Item = ({ address, attributes, description, image, star, title, user }) =>
                     <BsBookmarkStarFill size={24} className='w-[10%] flex justify-end' color='orange' />
                 </div>
                 <div className='my-2 flex gap-2 justify-between'>
-                    <span className='font-bold w-1/4 whitespace-nowrap text-green-600 '>{attributes?.price}</span>
-                    <span>{attributes?.acreage}</span>
+                    <span className='font-bold w-1/4 whitespace-nowrap text-green-600 '>{attributes?.price /1000000   } triệu/tháng</span>
+                    <span>{attributes?.acreage}m²</span>
                     <span>{`${address.split(',')[address.split(',').length - 2]},${address.split(',')[address.split(',').length - 1]}`}</span>
                 </div>
                 <p className='text-gray-500 w-full h-[100px] overflow-hidden line-clamp-4'>

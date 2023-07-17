@@ -34,7 +34,7 @@ const Pagination = ({ number }) => {
         <div className='flex items-center justify-center gap-2 py-5'>
         {!isHideStart && <PageNumber setCurrentPage={setCurrentPage} text={1} />}
         {(!isHideStart && currentPage !== 4) && <PageNumber text={'...'} />}
-        {arrPage.length > 0 && arrPage.map(item => {
+        {arrPage.length > 1 && arrPage.map(item => {
             return (
                 <PageNumber
                     key={item}

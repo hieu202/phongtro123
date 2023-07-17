@@ -1,20 +1,20 @@
 package hieu.com.dto;
 
 public class AttributeDTO {
-	private String price;
-	private String acreage;
+	private Double price;
+	private Double acreage;
 	private String published;
 	private String hashtag;
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(String price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public String getAcreage() {
+	public Double getAcreage() {
 		return acreage;
 	}
-	public void setAcreage(String acreage) {
+	public void setAcreage(Double acreage) {
 		this.acreage = acreage;
 	}
 	public String getPublished() {
