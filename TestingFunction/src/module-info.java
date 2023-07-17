@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author hieub
- *
- */
-module TestingFunction {
-}
