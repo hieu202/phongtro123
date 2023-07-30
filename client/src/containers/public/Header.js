@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import logo from '../../assets/logowithoutbg.png'
 import Button from '../../components/Button'
 import icons from '../../ultils/icons'
@@ -7,25 +7,31 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import * as actions from '../../store/actions'
 import menuManage from '../../ultils/menuManage'
+import { getCurrent } from '../../store/actions'
 
 const { AiFillPlusCircle, AiOutlineHeart, AiOutlineLogout } = icons
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoggedIn, name } = useSelector(state => state.auth)
+  const { isLoggedIn } = useSelector(state => state.auth)
   const [isShowMenu, setIsShowMenu] = useState(false)
+  const {currentData} = useSelector(state => state.user)
   // eslint-disable-next-lineY
   const goLogin = useCallback((flag) => {
     navigate(path.LOGIN, { state: { flag } })
 
 
   }, []);
+  useEffect(() => {
+    dispatch(getCurrent(JSON.parse(window.localStorage.getItem('persist:auth'))?.phone.slice(1,-1)))
+    
+  }, []);
   return (
     <div className='w-3/4'>
       <div className='w-full flex items-center justify-between '>
         <img src={logo} alt='logo' className='w-[240px] h-[70px] object-contain' />
         <div className='flex items-center gap-1'>
-          {isLoggedIn ? <small>{name}</small> : ""}
+          {isLoggedIn ? <small>{currentData.name}</small> : ""}
           <Button text={'Yêu thích'} textColor='text-white' bgColor='bg-secondary2' IcAfter={AiOutlineHeart} />
           {!isLoggedIn ?
             <div className=' flex items-center gap-1'>

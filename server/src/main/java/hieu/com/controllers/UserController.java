@@ -30,8 +30,5 @@ public class UserController {
 	public Optional<User> getInfo (@RequestParam String phone) {
 		return  userRepository.findByPhone(phone);
 	}
-	@GetMapping("/get_info1")
-	public Optional<User> getInfo1 () {
-		return  userRepository.findByPhone("12");
-	}
+	
 }

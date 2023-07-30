@@ -4,7 +4,9 @@ const initState = {
     token : null,
     msg: '',
     update: false,
-    name: ""
+    name: "", 
+    avatar: "",
+    phone: ""
 }
 const authReducer = (state = initState, action) => {
     switch(action.type) {
@@ -14,7 +16,9 @@ const authReducer = (state = initState, action) => {
             isLoggedIn: true,
             token: action.data,
             msg: 'Đăng nhập thành công',
-            name: action.name
+            name: action.name,
+            avatar: action.avatar,
+            phone: action.phone
         }
         case actionTypes.LOGIN_FAIL : 
         return {
@@ -43,7 +47,8 @@ const authReducer = (state = initState, action) => {
                 ...state,
                 isLoggedIn: false,
                 token: null,
-                msg: ''
+                msg: '',
+                phone : ''
             }
         default:
             return state;

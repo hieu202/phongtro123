@@ -11,7 +11,7 @@ const appReducer = (state = initState, action) => {
                 categories: action.categories || []
             }
         
-
+            
         default:
             return state;
     }

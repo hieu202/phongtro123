@@ -81,6 +81,8 @@ public class AuthController {
     	                         userDetails.getId(), 
     	                         userDetails.getUsername(), 
     	                         userDetails.getPhone(), 
+    	                         userDetails.getAvatar(),
+    	                         userDetails.getZalo(),
     	                         roles));
     } catch(BadCredentialsException  e) {
     	return ResponseEntity

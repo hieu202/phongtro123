@@ -22,6 +22,8 @@ public class UserDetailsImpl implements UserDetails {
 
   private String phone;
 
+  private String avatar;
+  private String zalo;
   @JsonIgnore
   private String password;
 
@@ -35,6 +37,16 @@ public class UserDetailsImpl implements UserDetails {
     this.password = password;
     this.authorities = authorities;
   }
+  public UserDetailsImpl(Integer id, String name, String phone, String password, String avatar,
+	      String zalo, Collection<? extends GrantedAuthority> authorities) {
+	    this.id = id;
+	    this.name = name;
+	    this.phone = phone;
+	    this.password = password;
+	    this.avatar = avatar;
+	    this.zalo = zalo;
+	    this.authorities = authorities;
+	  }
 
   public static UserDetailsImpl build(User user) {
     List<GrantedAuthority> authorities = user.getRole().stream()
@@ -46,6 +58,8 @@ public class UserDetailsImpl implements UserDetails {
         user.getName(), 
         user.getPhone(),
         user.getPassword(), 
+        user.getAvatar(),
+        user.getZalo(),
         authorities);
   }
 
@@ -101,4 +115,17 @@ public class UserDetailsImpl implements UserDetails {
     UserDetailsImpl user = (UserDetailsImpl) o;
     return Objects.equals(id, user.id);
   }
+public String getAvatar() {
+	return avatar;
+}
+public void setAvatar(String avatar) {
+	this.avatar = avatar;
+}
+public String getZalo() {
+	return zalo;
+}
+public void setZalo(String zalo) {
+	this.zalo = zalo;
+}
+
 }

@@ -40,6 +40,7 @@ public class User  {
 	@Size(max = 45)
 	private String zalo;
 
+	private String avatar;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> role = new HashSet<>();
@@ -48,19 +49,27 @@ public class User  {
 		super();
 	}
 	
+	public User(String name, String phone, String password, String avatar) {
+		this.name = name;
+		this.phone = phone;
+		this.password = password;
+		this.avatar = avatar;
+	}
 	public User(String name, String phone, String password) {
 		this.name = name;
 		this.phone = phone;
 		this.password = password;
+		
 	}
 	public User(Integer id, @NotBlank @Size(max = 45) String name, @NotBlank @Size(max = 45) String password,
-			@NotBlank @Size(max = 45) String phone, @NotBlank @Size(max = 45) String zalo, Set<Role> role) {
+			@NotBlank @Size(max = 45) String phone, @NotBlank @Size(max = 45) String zalo, String avatar, Set<Role> role) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.password = password;
 		this.phone = phone;
 		this.zalo = zalo;
+		this.avatar = avatar;
 		this.role = role;
 	}
 
@@ -102,6 +111,14 @@ public class User  {
 
 	public void setZalo(String zalo) {
 		this.zalo = zalo;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public Set<Role> getRole() {

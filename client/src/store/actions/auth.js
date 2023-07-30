@@ -8,7 +8,9 @@ export const signIn = (payload) => async (dispatch) => {
             dispatch({
                 type: actionTypes.LOGIN_SUCCESS,
                 data: response.data.accessToken,
-                name: response.data.name
+                name: response.data.name,
+                avatar: response.data.avatar,
+                phone: response.data.phone
             })
         } 
     } catch (error) {

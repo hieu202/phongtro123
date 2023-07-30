@@ -4,7 +4,7 @@ public class UserDTO {
 	private String name;
 	private String phone;
 	private String zalo;
-	
+	private String avatar;
 	public UserDTO() {
 		super();
 	}
@@ -13,6 +13,20 @@ public class UserDTO {
 		this.name = name;
 		this.phone = phone;
 		this.zalo = zalo;
+	}
+	
+	public UserDTO(String name, String phone, String zalo, String avatar) {
+		super();
+		this.name = name;
+		this.phone = phone;
+		this.zalo = zalo;
+		this.avatar = avatar;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 	public String getName() {
 		return name;
