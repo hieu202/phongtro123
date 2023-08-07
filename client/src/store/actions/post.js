@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes'
-import { apiGetPosts, apiGetPostsLimit, apiGetPostsLimitByAcreage, apiGetPostsLimitByPrice } from '../../services/post'
+import { apiGetPosts, apiGetPostsLimit, apiGetPostsLimitByAcreage, apiGetPostsLimitByPrice, apigetPostsByPhone } from '../../services/post'
 export const getPosts = () => async (dispatch) => {
     try {
         const response = await apiGetPosts();
@@ -17,6 +17,22 @@ export const getPosts = () => async (dispatch) => {
     }
 }
 
+export const getPostsByPhone = (phone) => async (dispatch) => {
+    try {
+        const response = await apigetPostsByPhone(phone);
+        if (response?.data) {
+            dispatch({
+                type: actionTypes.GET_POSTS_PHONE,
+                postsPhone: response.data
+            })
+        }
+    } catch (error) {
+        dispatch({
+            type : actionTypes.GET_POSTS_PHONE,
+            postsPhone: null
+        })
+    }
+}
 export const getPostsLimit = (page) => async (dispatch) => {
     try {
         const response = await apiGetPostsLimit(page);

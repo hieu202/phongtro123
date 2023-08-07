@@ -6,6 +6,7 @@ import { getCurrent } from '../store/actions'
 const targets = [
     { code: 'Nam', value: 'Nam' },
     { code: 'Nữ', value: 'Nữ' },
+    {code: 'Tất cả', value: 'Tất cả'}
 ]
 
 
@@ -13,7 +14,7 @@ const Overview = ({ payload, setPayload }) => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getCurrent(JSON.parse(window.localStorage.getItem('persist:auth'))?.phone.slice(1,-1)))
-        
+        setPayload(prev => ({...prev, phone : JSON.parse(window.localStorage.getItem('persist:auth'))?.phone.slice(1,-1)}) )
       }, []);
     const { categories } = useSelector(state => state.app)
     const { currentData } = useSelector(state => state.user)

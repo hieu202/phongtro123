@@ -12,7 +12,7 @@ import hieu.com.models.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
   Optional<User> findByPhone(String phone);
  
-
+ 
   Boolean existsByPhone(String phone);
 
   

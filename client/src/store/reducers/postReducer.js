@@ -1,6 +1,7 @@
 import actionTypes from "../actions/actionTypes";
 const initState = {
     posts: [],
+    postsPhone: [],
     count: 0
 }
 const postReducer = (state = initState, action) => {
@@ -9,6 +10,11 @@ const postReducer = (state = initState, action) => {
             return {
                 ...state,
                 posts: action.posts || []
+            }
+        case actionTypes.GET_POSTS_PHONE:
+            return {
+                ...state,
+                postsPhone: action.postsPhone || []
             }
         case actionTypes.GET_POSTS_LIMIT:
             return {

@@ -2,6 +2,8 @@
 
 
 
+import java.util.Date;
+
 import hieu.com.dto.AttributeDTO;
 import hieu.com.dto.ImageDTO;
 import hieu.com.dto.UserDTO;
@@ -16,6 +18,7 @@ public class PostResponse {
 	private ImageDTO image;
 	private AttributeDTO attributeDTO;
 	private UserDTO userDTO;
+	private Date createdDate;
 	
 	public PostResponse() {
 		super();
@@ -80,6 +83,12 @@ public class PostResponse {
 	}
 	public void setUserDTO(UserDTO userDTO) {
 		this.userDTO = userDTO;
+	}
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 	
 	

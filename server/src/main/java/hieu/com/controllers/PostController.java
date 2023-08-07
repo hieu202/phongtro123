@@ -1,6 +1,7 @@
 package hieu.com.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,17 +9,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hieu.com.models.Attribute;
+import hieu.com.models.Category;
+import hieu.com.models.Image;
 import hieu.com.models.Post;
+import hieu.com.models.User;
+import hieu.com.repository.AttributeRepository;
+import hieu.com.repository.CategoryRepository;
+import hieu.com.repository.ImageRepository;
 import hieu.com.repository.PostRepository;
+import hieu.com.repository.UserRepository;
+import hieu.com.request.PostRequest;
 import hieu.com.response.PostListResponse;
 import hieu.com.response.PostResponse;
 import hieu.com.service.PostService;
+import org.json.simple.JSONArray;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -28,25 +42,38 @@ public class PostController {
 	PostService postService;
 	@Autowired
 	PostRepository postRepository;
-
+	@Autowired
+	CategoryRepository categoryRepository;
+	@Autowired
+	ImageRepository imageRepository;
+	@Autowired
+	UserRepository userRepository;
+	@Autowired
+	AttributeRepository attributeRepository;
+	
 	@GetMapping("/post/all")
 	public List<PostResponse> getAllPost() {
 		return postService.getAllPosts();
 	}
-
+	
+	@GetMapping("/post")
+	public List<PostResponse> getPostByPhone(@RequestParam String phone) {
+		return postService.getAllPostsByPhone(phone);
+	}
 	@GetMapping("/post/limit")
 	public PostListResponse getLimitPost(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		List<PostResponse> posts = postService.getLimitPosts(page, size);
-	    double countTotal = (double)postRepository.count(); // Lấy tổng số bài viết
-	    int count = (int) Math.ceil(countTotal / size);
-	    PostListResponse response = new PostListResponse();
-	    response.setPosts(posts);
-	    response.setCount(count);
+		double countTotal = (double) postRepository.count(); // Lấy tổng số bài viết
+		int count = (int) Math.ceil(countTotal / size);
+		PostListResponse response = new PostListResponse();
+		response.setPosts(posts);
+		response.setCount(count);
 
-	    return response;
+		return response;
 
 	}
+
 //	@GetMapping("/post/limit/price")
 //	public PostListResponse getLimitPostByPrice(@RequestParam(defaultValue = "0") int page,
 //			@RequestParam(defaultValue = "10") int size,
@@ -64,29 +91,60 @@ public class PostController {
 	@GetMapping("post/limit/price")
 	public PostListResponse getPostByPrice(@RequestParam double minPrice, @RequestParam double maxPrice,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-	    List<PostResponse> posts= postService.getPagePostsByPrice(minPrice, maxPrice, page, size);
+		List<PostResponse> posts = postService.getPagePostsByPrice(minPrice, maxPrice, page, size);
 		PageRequest pageable = PageRequest.of(page, size);
-	    Page<Object[]> postsPage = postRepository.findAllPostByPrice(minPrice, maxPrice, pageable);
-        double totalCount = (double)postsPage.getTotalElements();
-	    int count = (int) Math.ceil(totalCount / size);
-	    PostListResponse response = new PostListResponse();
-	    response.setPosts(posts);
-	    response.setCount(count);
+		Page<Object[]> postsPage = postRepository.findAllPostByPrice(minPrice, maxPrice, pageable);
+		double totalCount = (double) postsPage.getTotalElements();
+		int count = (int) Math.ceil(totalCount / size);
+		PostListResponse response = new PostListResponse();
+		response.setPosts(posts);
+		response.setCount(count);
 
-	    return response;
+		return response;
 	}
+
 	@GetMapping("post/limit/acreage")
 	public PostListResponse getPostByAcreage(@RequestParam double minAcreage, @RequestParam double maxAcreage,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-	    List<PostResponse> posts= postService.getPagePostsByAcreage(minAcreage, maxAcreage, page, size);
+		List<PostResponse> posts = postService.getPagePostsByAcreage(minAcreage, maxAcreage, page, size);
 		PageRequest pageable = PageRequest.of(page, size);
-	    Page<Object[]> postsPage = postRepository.findAllPostByArea(minAcreage, maxAcreage, pageable);
-        double totalCount = (double)postsPage.getTotalElements();
-	    int count = (int) Math.ceil(totalCount / size);
-	    PostListResponse response = new PostListResponse();
-	    response.setPosts(posts);
-	    response.setCount(count);
+		Page<Object[]> postsPage = postRepository.findAllPostByArea(minAcreage, maxAcreage, pageable);
+		double totalCount = (double) postsPage.getTotalElements();
+		int count = (int) Math.ceil(totalCount / size);
+		PostListResponse response = new PostListResponse();
+		response.setPosts(posts);
+		response.setCount(count);
 
-	    return response;
+		return response;
+	}
+
+	@PostMapping("post/create")
+	/* @PreAuthorize("hasRole('USER')") */
+	public Post CreatePost(@RequestBody PostRequest newPost) {
+		//Add Category
+		Category category = categoryRepository.findByCode(newPost.getCategoryCode());
+		//Add Image
+		Image image = new Image();
+		image.setImage("[" + '"' + String.join(('"' + "," + '"'), newPost.getImages()) + '"' + "]");
+		imageRepository.save(image);
+		//Add Attribute
+		Attribute attribute = new Attribute();
+		attribute.setAcreage(newPost.getAreaNumber());
+		attribute.setPrice(newPost.getPriceNumber());
+		attributeRepository.save(attribute);
+		//Add user
+		Optional<User> user = userRepository.findByPhone(newPost.getPhone());
+		//Add Posts
+		Post post = new Post();
+		post.setAddress(newPost.getAddress());
+		post.setCategory_code("" + category.getId());
+		post.setImages_id(image.getId());
+		post.setTitle(newPost.getTitle());
+		post.setDescription("["+'"'+newPost.getDescription()+'"'+"]");
+		post.setAttribute_id(attribute.getId());
+		post.setUser_id(user.orElse(null).getId());
+		post.setLabel_code(category.getId().toString());
+		postRepository.save(post);
+		return post;
 	}
 }

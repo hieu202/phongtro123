@@ -7,6 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @MappedSuperclass
 public abstract class BaseEntity {
@@ -14,10 +18,12 @@ public abstract class BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id") // tên colunm mapping với property này
 	private Integer id;
-	
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
 	@Column(name = "created_date", nullable = true)
 	private Date createdDate;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
 	@Column(name = "updated_date", nullable = true)
 	private Date updatedDate;
 
@@ -44,5 +50,15 @@ public abstract class BaseEntity {
 	public void setUpdatedDate(Date updatedDate) {
 		this.updatedDate = updatedDate;
 	}
-	
+
+	@PrePersist
+	protected void onCreate() {
+		this.createdDate = new Date();
+		this.updatedDate = new Date();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		this.updatedDate = new Date();
+	}
 }

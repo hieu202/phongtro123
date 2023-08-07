@@ -7,5 +7,7 @@ import hieu.com.models.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer>{
+
+	Category findByCode(String categoryCode);
 	
 }
