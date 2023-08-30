@@ -91,3 +91,16 @@ export const apiAddPosts= (payload) => new Promise(async(resolve, reject) => {
         reject(error);
     } 
 })
+
+export const apiDeletePosts= (id) => new Promise(async(resolve, reject) => {
+    try {
+        const response = await axiosConfig({
+            method : 'DELETE',
+            url : `api/v1/post/delete?id=${id}`,
+            
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error);
+    } 
+})

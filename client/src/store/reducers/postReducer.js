@@ -2,7 +2,9 @@ import actionTypes from "../actions/actionTypes";
 const initState = {
     posts: [],
     postsPhone: [],
-    count: 0
+    count: 0,
+    dataEdit: {},
+    province: null,
 }
 const postReducer = (state = initState, action) => {
     switch (action.type) {
@@ -33,6 +35,12 @@ const postReducer = (state = initState, action) => {
                 ...state,
                 posts: action.posts || [],
                 count: action.count || 0
+            }
+        case actionTypes.EDIT_DATA:
+            return {
+                ...state,	
+                dataEdit: action.dataEdit || {},
+                province: action.province || null,
             }
         default:
             return state;

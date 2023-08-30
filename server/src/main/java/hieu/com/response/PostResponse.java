@@ -7,6 +7,8 @@ import java.util.Date;
 import hieu.com.dto.AttributeDTO;
 import hieu.com.dto.ImageDTO;
 import hieu.com.dto.UserDTO;
+import hieu.com.models.Category;
+import hieu.com.models.Overview;
 
 
 public class PostResponse {
@@ -19,12 +21,16 @@ public class PostResponse {
 	private AttributeDTO attributeDTO;
 	private UserDTO userDTO;
 	private Date createdDate;
-	
+	private Category category;
+	private Overview overview;
+	private String province;
+	private String street;
 	public PostResponse() {
 		super();
 	}
-	public PostResponse(int id, String title, String star, String address, String description,
-			ImageDTO image, AttributeDTO attributeDTO, UserDTO userDTO) {
+
+	public PostResponse(int id, String title, String star, String address, String description, ImageDTO image,
+			AttributeDTO attributeDTO, UserDTO userDTO, Date createdDate, Category category, Overview overview) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -34,7 +40,12 @@ public class PostResponse {
 		this.image = image;
 		this.attributeDTO = attributeDTO;
 		this.userDTO = userDTO;
+		this.createdDate = createdDate;
+		this.category = category;
+		this.overview = overview;
+		
 	}
+
 	public int getId() {
 		return id;
 	}
@@ -89,6 +100,38 @@ public class PostResponse {
 	}
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public Overview getOverview() {
+		return overview;
+	}
+
+	public void setOverview(Overview overview) {
+		this.overview = overview;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
 	}
 	
 	

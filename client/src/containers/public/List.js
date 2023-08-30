@@ -6,6 +6,7 @@ import { getPosts, getPostsLimit, getPostsLimitByAcreage, getPostsLimitByPrice }
 import Pagination from './Pagination'
 import { useSearchParams } from 'react-router-dom'
 import { apiGetPostsLimitByPrice } from '../../services/post'
+import moment from 'moment'
 const List = ({ page, minPrice, maxPrice, minAcreage, maxAcreage }) => {
     const dispatch = useDispatch()
     const [searchParams] = useSearchParams()
@@ -47,7 +48,7 @@ const List = ({ page, minPrice, maxPrice, minAcreage, maxAcreage }) => {
         <div className='w-full p-2 bg-white shadow-md rounded-md'>
             <div className='flex items-center justify-between my-3'>
                 <h4>Danh sách tin đăng</h4>
-                <span>Cập nhât: 12:05 25/08/2022</span>
+                <span>Cập nhật: {moment().format("DD/MM/YYYY")}</span>
             </div>
             <div className='flex items-center gap-2 my-2'>
                 <span>Sắp xếp:</span>

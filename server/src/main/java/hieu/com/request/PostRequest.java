@@ -9,6 +9,7 @@ public class PostRequest {
 	private String[] images;
 	private double priceNumber;
 	private String province;
+	private String street;
 	private String target;
 	private String title;
 	private String phone;
@@ -71,6 +72,12 @@ public class PostRequest {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	public String getStreet() {
+		return street;
+	}
+	public void setStreet(String street) {
+		this.street = street;
 	}
 	
 }

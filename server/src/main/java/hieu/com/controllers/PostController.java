@@ -11,8 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import hieu.com.models.Attribute;
 import hieu.com.models.Category;
 import hieu.com.models.Image;
+import hieu.com.models.Overview;
 import hieu.com.models.Post;
 import hieu.com.models.User;
 import hieu.com.repository.AttributeRepository;
 import hieu.com.repository.CategoryRepository;
 import hieu.com.repository.ImageRepository;
+import hieu.com.repository.OverviewRepository;
 import hieu.com.repository.PostRepository;
 import hieu.com.repository.UserRepository;
 import hieu.com.request.PostRequest;
@@ -50,13 +55,15 @@ public class PostController {
 	UserRepository userRepository;
 	@Autowired
 	AttributeRepository attributeRepository;
-	
+	@Autowired
+	OverviewRepository overviewRepository;
 	@GetMapping("/post/all")
 	public List<PostResponse> getAllPost() {
 		return postService.getAllPosts();
 	}
 	
 	@GetMapping("/post")
+	@PreAuthorize("hasRole('USER')")
 	public List<PostResponse> getPostByPhone(@RequestParam String phone) {
 		return postService.getAllPostsByPhone(phone);
 	}
@@ -134,6 +141,10 @@ public class PostController {
 		attributeRepository.save(attribute);
 		//Add user
 		Optional<User> user = userRepository.findByPhone(newPost.getPhone());
+		//Add Overview
+		Overview overview = new Overview();
+		overview.setTarget(newPost.getTarget());
+		overviewRepository.save(overview);
 		//Add Posts
 		Post post = new Post();
 		post.setAddress(newPost.getAddress());
@@ -144,7 +155,29 @@ public class PostController {
 		post.setAttribute_id(attribute.getId());
 		post.setUser_id(user.orElse(null).getId());
 		post.setLabel_code(category.getId().toString());
+		post.setOverview_id(overview.getId());
+		post.setStatus(true);
+		post.setProvince(newPost.getProvince());
+		post.setStreet(newPost.getStreet());
 		postRepository.save(post);
 		return post;
 	}
+	
+	//Xóa bài viết
+	@DeleteMapping("/post/delete")
+	@PreAuthorize("hasRole('USER')")
+	public Post deletePostById(@RequestParam Integer id) {
+		Optional<Post> post = postRepository.findById(id);
+		postRepository.delete(post.orElse(null));
+		return post.orElse(null);
+	}
+	
+	// Sửa trạng thái
+	@PutMapping("post/status/{id}/{status}") 
+		public Boolean setStatus(@PathVariable Boolean status, @PathVariable int id) {
+			Post post = postRepository.findById(id).orElse(null);
+			post.setStatus(status);
+			return status;
+		}
+	
 }

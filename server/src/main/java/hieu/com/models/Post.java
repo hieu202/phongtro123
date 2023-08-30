@@ -21,6 +21,10 @@ public class Post extends BaseEntity {
 	private String description;
 	@Column(name = "label_code", length = 120, nullable = true)
 	private String label_code;
+	@Column(name = "province", length = 120, nullable = true)
+	private String province;
+	@Column(name = "street", length = 120, nullable = true)
+	private String street;
 	@Column(name = "attribute_id", nullable = true)
 	private Integer attribute_id;
 	@Column(name = "images_id", nullable = true)
@@ -31,7 +35,8 @@ public class Post extends BaseEntity {
 	private Integer user_id;
 	@Column(name = "overview_id", nullable = true)
 	private Integer overview_id;
-	
+	@Column(name = "status", nullable = true)
+	private Boolean status;
 	public Post() {
 		super();
 	}
@@ -97,11 +102,30 @@ public class Post extends BaseEntity {
 	public void setUser_id(Integer user_id) {
 		this.user_id = user_id;
 	}
+	public Boolean getStatus() {
+		return status;
+	}
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
 	public Integer getOverview_id() {
 		return overview_id;
 	}
 	public void setOverview_id(Integer overview_id) {
 		this.overview_id = overview_id;
 	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getStreet() {
+		return street;
+	}
+	public void setStreet(String street) {
+		this.street = street;
+	}
+	
 	
 }

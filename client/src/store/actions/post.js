@@ -89,3 +89,9 @@ export const getPostsLimitByAcreage = (page, minAcreage, maxAcreage) => async (d
         })
     }
 }
+
+export const editData = (dataEdit, province) => ({
+    type: actionTypes.EDIT_DATA,
+    dataEdit,
+    province
+})

@@ -13,11 +13,15 @@ import hieu.com.dto.AttributeDTO;
 import hieu.com.dto.ImageDTO;
 import hieu.com.dto.UserDTO;
 import hieu.com.models.Attribute;
+import hieu.com.models.Category;
 import hieu.com.models.Image;
+import hieu.com.models.Overview;
 import hieu.com.models.Post;
 import hieu.com.models.User;
 import hieu.com.repository.AttributeRepository;
+import hieu.com.repository.CategoryRepository;
 import hieu.com.repository.ImageRepository;
+import hieu.com.repository.OverviewRepository;
 import hieu.com.repository.PostRepository;
 import hieu.com.repository.UserRepository;
 import hieu.com.response.PostResponse;
@@ -33,6 +37,10 @@ public class PostServiceImpl implements PostService {
 	AttributeRepository attributeRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	CategoryRepository categoryRepository;
+	@Autowired
+	OverviewRepository overviewRepository;
 
 	@Override
 	public List<PostResponse> getAllPosts() {
@@ -81,7 +89,7 @@ public class PostServiceImpl implements PostService {
 		}
 		return postResponses;
 	}
-	
+
 	@Override
 	public List<PostResponse> getAllPostsByPhone(String phone) {
 		// TODO Auto-generated method stub
@@ -95,6 +103,8 @@ public class PostServiceImpl implements PostService {
 			postResponse.setDescription(post.getDescription());
 			postResponse.setStar(post.getStar());
 			postResponse.setCreatedDate(post.getCreatedDate());
+			postResponse.setProvince(post.getProvince());
+			postResponse.setStreet(post.getStreet());
 			ImageDTO imageDTO = new ImageDTO();
 			AttributeDTO attributeDTO = new AttributeDTO();
 			UserDTO userDTO = new UserDTO();
@@ -104,30 +114,41 @@ public class PostServiceImpl implements PostService {
 				if (image != null) {
 					imageDTO.setImage(image.getImage());
 				}
-				// lấy attribute
-				Attribute attribute = attributeRepository.findById(post.getAttribute_id()).orElse(null);
-				if (attribute != null) {
-					attributeDTO.setPrice(attribute.getPrice());
-					attributeDTO.setAcreage(attribute.getAcreage());
-					attributeDTO.setHashtag(attribute.getHashtag());
-					attributeDTO.setPublished(attribute.getPublished());
-				}
-				// lấy user
-				User user = userRepository.findById(post.getUser_id()).orElse(null);
-				if (user != null) {
-					userDTO.setName(user.getName());
-					userDTO.setPhone(user.getPhone());
-					userDTO.setZalo(user.getZalo());
-				}
 			}
-
+			// lấy attribute
+			Attribute attribute = attributeRepository.findById(post.getAttribute_id()).orElse(null);
+			if (attribute != null) {
+				attributeDTO.setPrice(attribute.getPrice());
+				attributeDTO.setAcreage(attribute.getAcreage());
+				attributeDTO.setHashtag(attribute.getHashtag());
+				attributeDTO.setPublished(attribute.getPublished());
+			}
+			// lấy user
+			User user = userRepository.findById(post.getUser_id()).orElse(null);
+			if (user != null) {
+				userDTO.setName(user.getName());
+				userDTO.setPhone(user.getPhone());
+				userDTO.setZalo(user.getZalo());
+			}
+			// lấy category
+			if (post.getCategory_code() != null) {
+				Category category = categoryRepository.findById(Integer.parseInt(post.getCategory_code())).orElse(null);
+				postResponse.setCategory(category);
+			}
+			// lấy overview
+			if (post.getOverview_id() != null) {
+				Overview overview = overviewRepository.findById(post.getOverview_id()).orElse(null);
+				postResponse.setOverview(overview);
+			}
 			postResponse.setImage(imageDTO);
 			postResponse.setAttributeDTO(attributeDTO);
 			postResponse.setUserDTO(userDTO);
-			if(userDTO.getPhone().compareTo(phone) == 0) {
+		
+			
+
+			if (userDTO.getPhone().compareTo(phone) == 0) {
 				postResponses.add(postResponse);
 			}
-			
 
 		}
 		return postResponses;
@@ -137,8 +158,8 @@ public class PostServiceImpl implements PostService {
 	public List<PostResponse> getLimitPosts(int page, int size) {
 		// TODO Auto-generated method stub
 		PageRequest pr = PageRequest.of(page, size);
-	    Page<Post> postPage = postRepository.findAll(pr);
-	    List<Post> posts = postPage.getContent();
+		Page<Post> postPage = postRepository.findAll(pr);
+		List<Post> posts = postPage.getContent();
 		List<PostResponse> postResponses = new ArrayList<>();
 		for (Post post : posts) {
 			PostResponse postResponse = new PostResponse();
@@ -147,7 +168,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setTitle(post.getTitle());
 			postResponse.setDescription(post.getDescription());
 			postResponse.setStar(post.getStar());
-			
+
 			ImageDTO imageDTO = new ImageDTO();
 			AttributeDTO attributeDTO = new AttributeDTO();
 			UserDTO userDTO = new UserDTO();
@@ -197,7 +218,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setTitle(post.getTitle());
 			postResponse.setDescription(post.getDescription());
 			postResponse.setStar(post.getStar());
-			
+
 			ImageDTO imageDTO = new ImageDTO();
 			AttributeDTO attributeDTO = new AttributeDTO();
 			UserDTO userDTO = new UserDTO();
@@ -227,8 +248,8 @@ public class PostServiceImpl implements PostService {
 			postResponse.setImage(imageDTO);
 			postResponse.setAttributeDTO(attributeDTO);
 			postResponse.setUserDTO(userDTO);
-			if(attributeDTO.getPrice() >= minPrice && attributeDTO.getPrice() <= maxPrice) {
-			postResponses.add(postResponse);
+			if (attributeDTO.getPrice() >= minPrice && attributeDTO.getPrice() <= maxPrice) {
+				postResponses.add(postResponse);
 			}
 
 		}
@@ -239,13 +260,13 @@ public class PostServiceImpl implements PostService {
 	public List<PostResponse> getPagePostsByPrice(double minPrice, double maxPrice, int page, int size) {
 		// TODO Auto-generated method stub
 		PageRequest pr = PageRequest.of(page, size);
-	    Page<Object[]> postPage = postRepository.findAllPostByPrice(minPrice, maxPrice, pr);
-	    List<Object[]> postPage1 = postPage.getContent();
-	    List<Post> posts = new ArrayList<>();
-	    for(Object[] a: postPage1) {
-	    	Post post = postRepository.getById((Integer) a[0]);
-	    	posts.add(post);
-	    }
+		Page<Object[]> postPage = postRepository.findAllPostByPrice(minPrice, maxPrice, pr);
+		List<Object[]> postPage1 = postPage.getContent();
+		List<Post> posts = new ArrayList<>();
+		for (Object[] a : postPage1) {
+			Post post = postRepository.getById((Integer) a[0]);
+			posts.add(post);
+		}
 		List<PostResponse> postResponses = new ArrayList<>();
 		for (Post post : posts) {
 			PostResponse postResponse = new PostResponse();
@@ -254,7 +275,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setTitle(post.getTitle());
 			postResponse.setDescription(post.getDescription());
 			postResponse.setStar(post.getStar());
-			
+			postResponse.setStreet(post.getStreet());
 			ImageDTO imageDTO = new ImageDTO();
 			AttributeDTO attributeDTO = new AttributeDTO();
 			UserDTO userDTO = new UserDTO();
@@ -294,13 +315,13 @@ public class PostServiceImpl implements PostService {
 	public List<PostResponse> getPagePostsByAcreage(double minAcreage, double maxAcreage, int page, int size) {
 		// TODO Auto-generated method stub
 		PageRequest pr = PageRequest.of(page, size);
-	    Page<Object[]> postPage = postRepository.findAllPostByArea(minAcreage, maxAcreage, pr);
-	    List<Object[]> postPage1 = postPage.getContent();
-	    List<Post> posts = new ArrayList<>();
-	    for(Object[] a: postPage1) {
-	    	Post post = postRepository.getById((Integer) a[0]);
-	    	posts.add(post);
-	    }
+		Page<Object[]> postPage = postRepository.findAllPostByArea(minAcreage, maxAcreage, pr);
+		List<Object[]> postPage1 = postPage.getContent();
+		List<Post> posts = new ArrayList<>();
+		for (Object[] a : postPage1) {
+			Post post = postRepository.getById((Integer) a[0]);
+			posts.add(post);
+		}
 		List<PostResponse> postResponses = new ArrayList<>();
 		for (Post post : posts) {
 			PostResponse postResponse = new PostResponse();
@@ -309,7 +330,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setTitle(post.getTitle());
 			postResponse.setDescription(post.getDescription());
 			postResponse.setStar(post.getStar());
-			
+
 			ImageDTO imageDTO = new ImageDTO();
 			AttributeDTO attributeDTO = new AttributeDTO();
 			UserDTO userDTO = new UserDTO();

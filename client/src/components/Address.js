@@ -1,8 +1,12 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Select, InputReadOnly } from '../components'
 import { apiGetPublicProvinces, apiGetPublicDistrict, apiGetPublicWard } from '../services/app'
+import { useSelector } from 'react-redux'
 
-const Address = ({ setPayload }) => {
+const Address = ({ setPayload, invalidFields, setInvalidFields }) => {
+
+    const {dataEdit} = useSelector(state => state.post)
+    // console.log(dataEdit)
 
     const [provinces, setProvinces] = useState([])
     const [districts, setDistricts] = useState([])
@@ -13,6 +17,17 @@ const Address = ({ setPayload }) => {
     const [reset, setReset] = useState(false)
     const [street, setStreet] = useState('')
 
+    useEffect(() => {
+        let foundProvince = provinces.length > 0  && provinces?.find(item => {
+            return item.province_name?.trim() === dataEdit?.province?.trim()
+        })
+        setProvince(foundProvince && foundProvince.province_id );
+        let addressArr = dataEdit?.address;
+        
+        setStreet(dataEdit?.street !== '' ? dataEdit.street : '');
+        // let a = addressArr[addressArr.length - 2]
+        console.log(addressArr);
+    }, [provinces])
     useEffect(() => {
         const fetchPublicProvince = async () => {
             const response = await apiGetPublicProvinces()
@@ -49,26 +64,27 @@ const Address = ({ setPayload }) => {
     useEffect(() => {
         setPayload(prev => ({
             ...prev,
-            address: `${street ? `${street},` : ''} ${ward ? `${wards?.find(item => item.ward_id === ward)?.ward_name},` : ''} ${district ? `${districts?.find(item => item.district_id === district)?.district_name},` : ''} ${province ? provinces?.find(item => item.province_id === province)?.province_name.replace(/(Thành phố|Tỉnh)\s*/g, '') : ''}`,
-            province: province ? provinces?.find(item => item.province_id === province)?.province_name : ''
+            address: `${street ? `${street}, ` : ''}${ward ? `${wards?.find(item => item.ward_id === ward)?.ward_name}, ` : ''}${district ? `${districts?.find(item => item.district_id === district)?.district_name}, ` : ''}${province ? provinces?.find(item => item.province_id === province)?.province_name.replace(/(Thành phố|Tỉnh)\s*/g, '') : ''}`,
+            province: province ? provinces?.find(item => item.province_id === province)?.province_name : '',
+            street : street,
         }))
 
-    }, [province, district, ward])
+    }, [street, province, district, ward])
     return (
         <div>
             <h2 className='font-semibold text-xl py-4'>Địa chỉ cho thuê</h2>
             <div className='flex flex-col gap-4'>
                 <div className='flex items-center gap-4'>
-                    <Select type='province' value={province} setValue={setProvince} options={provinces} label='Tỉnh/Thành phố' />
-                    <Select reset={reset} type='district' value={district} setValue={setDistrict} options={districts} label='Quận/Huyện' />
-                    <Select reset={reset} type='ward' value={ward} setValue={setWard} options={wards} label='Phường/Xã' /><br />
+                    <Select invalidFields= {invalidFields} setInvalidFields={setInvalidFields} type='province' value={province} setValue={setProvince} options={provinces} label='Tỉnh/Thành phố' />
+                    <Select invalidFields= {invalidFields} setInvalidFields={setInvalidFields} reset={reset} type='district' value={district} setValue={setDistrict} options={districts} label='Quận/Huyện' />
+                    <Select invalidFields= {invalidFields} setInvalidFields={setInvalidFields} reset={reset} type='ward' value={ward} setValue={setWard} options={wards} label='Phường/Xã' /><br />
                 </div>
                 <label className='font-medium'>Đường/Thôn</label>
-                <input className='border border-gray-300 p-2 rounded-md' value={street} onChange={(e) => setStreet(e.target.value)} />
+                <input id="street" className='border border-gray-300 p-2 rounded-md' value={street} onChange={(e) => setStreet(e.target.value)} />
 
                 <InputReadOnly
                     label='Địa chỉ chính xác'
-                    value={`${street ? `${street},` : ''} ${ward ? `${wards?.find(item => item.ward_id === ward)?.ward_name},` : ''} ${district ? `${districts?.find(item => item.district_id === district)?.district_name},` : ''} ${province ? provinces?.find(item => item.province_id === province)?.province_name : ''}`}
+                    value={`${street ? `${street}, ` : ''}${ward ? `${wards?.find(item => item.ward_id === ward)?.ward_name}, ` : ''}${district ? `${districts?.find(item => item.district_id === district)?.district_name}, ` : ''}${province ? provinces?.find(item => item.province_id === province)?.province_name : ''}`}
                 />
 
             </div>

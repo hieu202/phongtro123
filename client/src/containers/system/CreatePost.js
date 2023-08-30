@@ -4,23 +4,35 @@ import Overview from '../../components/Overview'
 import icons from '../../ultils/icons'
 import { apiAddPosts, apiUploadImages } from '../../services/post'
 import { Button, Loading } from '../../components'
+import validate from '../../ultils/Common/validateFields'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 const { BsCameraFill, ImBin } = icons
-const CreatePost = () => {
-  const [payload, setPayload] = useState({
-    categoryCode: '',
-    title: '',
-    priceNumber: 0,
-    areaNumber: 0,
-    images: '',
-    address: '',
-    description: '',
-    target: '',
-    province: '',
-    phone: ''
+const CreatePost = ({ isEdit }) => {
+  const { dataEdit } = useSelector(state => state.post)
+  console.log(dataEdit)
+  const [payload, setPayload] = useState(() => {
+    const initData = {
+      categoryCode: dataEdit?.category?.code || '',
+      title: dataEdit?.title || '',
+      priceNumber: dataEdit?.attributeDTO?.price || 0,
+      areaNumber: dataEdit?.attributeDTO?.acreage || 0,
+      images: dataEdit?.image?.image || '',
+      address: dataEdit?.address || '',
+      description: (dataEdit?.description || '').substring(2, (dataEdit?.description || '').length - 2),
+      target: dataEdit?.overview?.target || '',
+      province: dataEdit?.province || '',
+      phone: dataEdit?.phone || '',
+      street : dataEdit?.street || '',
+    }
+    return initData
   })
 
   const [imagesPreview, setImagesPreview] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
+  const [invalidFields, setInvalidFields] = useState([])
+  const navigate = useNavigate()
   const handleFiles = async (e) => {
     e.stopPropagation()
     setIsLoading(true)
@@ -44,21 +56,51 @@ const CreatePost = () => {
       images: prev.images?.filter(item => item !== image)
     }))
   }
+
   const handleSubmit = () => {
-    console.log(JSON.stringify(payload))
+    // console.log(JSON.stringify(payload))
+    const result = validate(payload, setInvalidFields);
+    // console.log(result);
+    // console.log(invalidFields);
+    // console.log(payload);
     const fetchCreatePost = async () => {
       const response = await apiAddPosts(payload)
+      if (response?.data) {
+        Swal.fire('Thành công', 'Đã thêm bài đăng mới', 'success').then(() => {
+          setPayload({
+            categoryCode: '',
+            title: '',
+            priceNumber: 0,
+            areaNumber: 0,
+            images: '',
+            address: '',
+            description: '',
+            target: '',
+            province: '',
+            phone: '',
+            street: '',
+          })
+        })
+        navigate('/he-thong/quan-ly-bai-dang')
+      } else {
+        // console.log(response)
+        Swal.fire('Có lỗi gì đó', 'error')
+      }
     }
-    fetchCreatePost();
-    console.log(payload);
+
+    if (result === 0) {
+      fetchCreatePost();
+    }
+
+    // console.log(payload);
   }
   return (
     <div className='px-6'>
-      <h1 className='text-3xl font-medium py-4 border-b border-gray-200'>Đăng tin mới</h1>
+      <h1 className='text-3xl font-medium py-4 border-b border-gray-200'>{!isEdit ? 'Đăng tin mới' : 'Sửa tin đăng'}</h1>
       <div className='flex'>
         <div className='py-4 flex flex-col gap-4 flex-auto'>
-          <Address payload={payload} setPayload={setPayload} />
-          <Overview payload={payload} setPayload={setPayload} />
+          <Address invalidFields={invalidFields} setInvalidFields={setInvalidFields} payload={payload} setPayload={setPayload} />
+          <Overview invalidFields={invalidFields} setInvalidFields={setInvalidFields} payload={payload} setPayload={setPayload} />
           <div className='w-full mb-6'>
             <h2 className='font-semibold text-xl py-4'>Hình ảnh</h2>
             <small>Cập nhật hình ảnh rõ ràng sẽ cho thuê nhanh hơn</small>
@@ -74,6 +116,9 @@ const CreatePost = () => {
               <input onChange={handleFiles} hidden type="file" id='file' multiple />
               <div className='w-full'>
                 <h3 className='font-medium py-4'>Ảnh đã chọn</h3>
+                <small className='text-red-500'>
+                  {invalidFields?.some(item => item.name === 'images') && invalidFields?.find(item => item.name === 'images')?.message}
+                </small>
                 <div className='flex gap-4 items-center'>
                   {imagesPreview?.map(item => {
                     return (
