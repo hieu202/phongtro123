@@ -18,16 +18,34 @@ const Address = ({ setPayload, invalidFields, setInvalidFields }) => {
     const [street, setStreet] = useState('')
 
     useEffect(() => {
+        setStreet(dataEdit?.street !== '' ? dataEdit.street : '');
+
         let foundProvince = provinces.length > 0  && provinces?.find(item => {
             return item.province_name?.trim() === dataEdit?.province?.trim()
         })
         setProvince(foundProvince && foundProvince.province_id );
-        let addressArr = dataEdit?.address;
+
         
-        setStreet(dataEdit?.street !== '' ? dataEdit.street : '');
-        // let a = addressArr[addressArr.length - 2]
-        console.log(addressArr);
+        
+        // console.log(addressArr[addressArr.length - 2]);
     }, [provinces])
+
+    useEffect(() => {
+        let addressArr = dataEdit?.address?.split(',');
+
+        let foundDistrict = districts.length > 0  && districts?.find(item => {
+            return item.district_name?.trim() === addressArr[addressArr.length - 2]?.trim()
+        })
+        setDistrict(foundDistrict && foundDistrict.district_id)
+    }, [districts])
+    useEffect(() => {
+        let addressArr = dataEdit?.address?.split(',');
+
+        let foundWard = wards.length > 0  && wards?.find(item => {
+            return item.ward_name?.trim() === addressArr[addressArr.length - 3]?.trim()
+        })
+        setWard(foundWard && foundWard.ward_id);
+    }, [wards])
     useEffect(() => {
         const fetchPublicProvince = async () => {
             const response = await apiGetPublicProvinces()

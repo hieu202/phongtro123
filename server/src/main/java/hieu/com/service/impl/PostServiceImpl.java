@@ -3,10 +3,12 @@ package hieu.com.service.impl;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import hieu.com.dto.AttributeDTO;
@@ -24,6 +26,7 @@ import hieu.com.repository.ImageRepository;
 import hieu.com.repository.OverviewRepository;
 import hieu.com.repository.PostRepository;
 import hieu.com.repository.UserRepository;
+import hieu.com.request.PostRequest;
 import hieu.com.response.PostResponse;
 import hieu.com.service.PostService;
 
@@ -143,8 +146,6 @@ public class PostServiceImpl implements PostService {
 			postResponse.setImage(imageDTO);
 			postResponse.setAttributeDTO(attributeDTO);
 			postResponse.setUserDTO(userDTO);
-		
-			
 
 			if (userDTO.getPhone().compareTo(phone) == 0) {
 				postResponses.add(postResponse);
@@ -364,6 +365,45 @@ public class PostServiceImpl implements PostService {
 
 		}
 		return postResponses;
+	}
+
+	@Override
+	public Post updatePostById(PostRequest postRequest) {
+		// TODO Auto-generated method stub
+		Post post = postRepository.findById(postRequest.getPostId()).orElse(null);
+		// Update Category
+		Category category = categoryRepository.findByCode(postRequest.getCategoryCode());
+		// Add Image
+		Image image = imageRepository.findById(post.getImages_id()).orElse(null);
+		image.setImage("[" + '"' + String.join(('"' + "," + '"'), postRequest.getImages()) + '"' + "]");
+		imageRepository.save(image);
+		// Update Attribute
+		Attribute attribute = attributeRepository.findById(post.getAttribute_id()).orElse(null);
+		attribute.setAcreage(postRequest.getAreaNumber());
+		attribute.setPrice(postRequest.getPriceNumber());
+		attributeRepository.save(attribute);
+		// Update user
+		Optional<User> user = userRepository.findByPhone(postRequest.getPhone());
+		// Update Overview
+		Overview overview = overviewRepository.findById(post.getOverview_id()).orElse(null);
+		overview.setTarget(postRequest.getTarget());
+		overviewRepository.save(overview);
+		// Update Posts
+		
+		post.setAddress(postRequest.getAddress());
+		post.setCategory_code("" + category.getId());
+		post.setImages_id(image.getId());
+		post.setTitle(postRequest.getTitle());
+		post.setDescription("[" + '"' + postRequest.getDescription() + '"' + "]");
+		post.setAttribute_id(attribute.getId());
+		post.setUser_id(user.orElse(null).getId());
+		post.setLabel_code(category.getId().toString());
+		post.setOverview_id(overview.getId());
+		post.setStatus(true);
+		post.setProvince(postRequest.getProvince());
+		post.setStreet(postRequest.getStreet());
+		postRepository.save(post);
+		return post;
 	}
 
 }

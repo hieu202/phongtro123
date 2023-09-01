@@ -1,24 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Address from '../../components/Address'
 import Overview from '../../components/Overview'
 import icons from '../../ultils/icons'
-import { apiAddPosts, apiUploadImages } from '../../services/post'
+import { apiAddPosts, apiUpdatePosts, apiUploadImages } from '../../services/post'
 import { Button, Loading } from '../../components'
 import validate from '../../ultils/Common/validateFields'
 import Swal from 'sweetalert2'
-import { useNavigate } from 'react-router-dom'
+import { json, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 const { BsCameraFill, ImBin } = icons
 const CreatePost = ({ isEdit }) => {
   const { dataEdit } = useSelector(state => state.post)
-  console.log(dataEdit)
+  // console.log(dataEdit)
   const [payload, setPayload] = useState(() => {
     const initData = {
       categoryCode: dataEdit?.category?.code || '',
       title: dataEdit?.title || '',
       priceNumber: dataEdit?.attributeDTO?.price || 0,
       areaNumber: dataEdit?.attributeDTO?.acreage || 0,
-      images: dataEdit?.image?.image || '',
+      images: dataEdit?.image?.image ? JSON.parse(dataEdit?.image?.image) : '',
       address: dataEdit?.address || '',
       description: (dataEdit?.description || '').substring(2, (dataEdit?.description || '').length - 2),
       target: dataEdit?.overview?.target || '',
@@ -57,6 +57,14 @@ const CreatePost = ({ isEdit }) => {
     }))
   }
 
+  useEffect(() => {
+    if(dataEdit) {
+      if(dataEdit?.image?.image !== undefined) {
+      let images = JSON.parse(dataEdit?.image?.image) 
+      images && setImagesPreview(images);
+      } 
+    }
+  }, [dataEdit])
   const handleSubmit = () => {
     // console.log(JSON.stringify(payload))
     const result = validate(payload, setInvalidFields);
@@ -87,9 +95,42 @@ const CreatePost = ({ isEdit }) => {
         Swal.fire('Có lỗi gì đó', 'error')
       }
     }
+    const fetchUpdatePost = async () => {
+      const response = await apiUpdatePosts(payload)
+      if (response?.data) {
+        Swal.fire('Thành công', 'Bạn đã sửa bài đăng', 'success').then(() => {
+          setPayload({
+            categoryCode: '',
+            title: '',
+            priceNumber: 0,
+            areaNumber: 0,
+            images: '',
+            address: '',
+            description: '',
+            target: '',
+            province: '',
+            phone: '',
+            street: '',
+          })
+          navigate('/he-thong/quan-ly-bai-dang')
+          window.location.reload();
+        })
+        
+      } else {
+        // console.log(response)
+        Swal.fire('Có lỗi gì đó', 'error')
+      }
+    }
 
     if (result === 0) {
-      fetchCreatePost();
+      if(dataEdit) {
+        payload.postId = dataEdit?.id
+        fetchUpdatePost();
+      } else {
+        console.log(JSON.stringify(payload))
+        fetchCreatePost();
+      }
+     
     }
 
     // console.log(payload);
@@ -138,7 +179,7 @@ const CreatePost = ({ isEdit }) => {
               </div>
             </div>
           </div>
-          <Button onClick={handleSubmit} text='Tạo mới' bgColor='bg-green-600' textColor='text-white' />
+          <Button onClick={handleSubmit} text={!isEdit ? 'Tạo mới' : 'Cập nhật'} bgColor='bg-green-600' textColor='text-white' />
           <div className='h-[500px]'>
 
           </div>

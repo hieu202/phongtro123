@@ -92,6 +92,18 @@ export const apiAddPosts= (payload) => new Promise(async(resolve, reject) => {
     } 
 })
 
+export const apiUpdatePosts= (payload) => new Promise(async(resolve, reject) => {
+    try {
+        const response = await axiosConfig({
+            method : 'PUT',
+            url : 'api/v1/post/update',
+            data: payload,
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error);
+    } 
+})
 export const apiDeletePosts= (id) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({

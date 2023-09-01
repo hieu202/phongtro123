@@ -13,6 +13,7 @@ public class PostRequest {
 	private String target;
 	private String title;
 	private String phone;
+	private Integer postId;
 	public String getAddress() {
 		return address;
 	}
@@ -79,5 +80,12 @@ public class PostRequest {
 	public void setStreet(String street) {
 		this.street = street;
 	}
+	public Integer getPostId() {
+		return postId;
+	}
+	public void setPostId(Integer postId) {
+		this.postId = postId;
+	}
+	
 	
 }

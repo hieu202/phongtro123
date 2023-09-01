@@ -180,4 +180,11 @@ public class PostController {
 			return status;
 		}
 	
+	// Sửa bài viết
+	@PutMapping("/post/update")
+	public ResponseEntity<Post> updatePost (@RequestBody PostRequest postRequest) {
+		Post post = postService.updatePostById(postRequest);
+		return ResponseEntity.ok(post);
+	}
+	
 }
