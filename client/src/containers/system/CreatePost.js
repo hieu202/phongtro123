@@ -123,7 +123,7 @@ const CreatePost = ({ isEdit }) => {
     }
 
     if (result === 0) {
-      if(dataEdit) {
+      if(isEdit) {
         payload.postId = dataEdit?.id
         fetchUpdatePost();
       } else {

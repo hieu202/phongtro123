@@ -32,19 +32,20 @@ const Address = ({ setPayload, invalidFields, setInvalidFields }) => {
 
     useEffect(() => {
         let addressArr = dataEdit?.address?.split(',');
-
+        console.log(addressArr?.length)
+        if (addressArr !== undefined ) {
         let foundDistrict = districts.length > 0  && districts?.find(item => {
-            return item.district_name?.trim() === addressArr[addressArr.length - 2]?.trim()
+            return item.district_name?.trim() === addressArr[addressArr?.length - 2]?.trim()
         })
-        setDistrict(foundDistrict && foundDistrict.district_id)
+        setDistrict(foundDistrict && foundDistrict.district_id)}
     }, [districts])
     useEffect(() => {
         let addressArr = dataEdit?.address?.split(',');
-
+        if(addressArr !== undefined) {
         let foundWard = wards.length > 0  && wards?.find(item => {
             return item.ward_name?.trim() === addressArr[addressArr.length - 3]?.trim()
         })
-        setWard(foundWard && foundWard.ward_id);
+        setWard(foundWard && foundWard.ward_id);}
     }, [wards])
     useEffect(() => {
         const fetchPublicProvince = async () => {

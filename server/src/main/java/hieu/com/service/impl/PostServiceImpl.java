@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -158,7 +159,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostResponse> getLimitPosts(int page, int size) {
 		// TODO Auto-generated method stub
-		PageRequest pr = PageRequest.of(page, size);
+		Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+		PageRequest pr = PageRequest.of(page, size, sort);
 		Page<Post> postPage = postRepository.findAll(pr);
 		List<Post> posts = postPage.getContent();
 		List<PostResponse> postResponses = new ArrayList<>();
@@ -210,7 +212,8 @@ public class PostServiceImpl implements PostService {
 //		PageRequest pr = PageRequest.of(page, size);
 //	    Page<Post> postPage = postRepository.findAll(pr);
 //	    List<Post> posts = postPage.getContent();
-		List<Post> posts = postRepository.findAll();
+		Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+		List<Post> posts = postRepository.findAll(sort);
 		List<PostResponse> postResponses = new ArrayList<>();
 		for (Post post : posts) {
 			PostResponse postResponse = new PostResponse();
